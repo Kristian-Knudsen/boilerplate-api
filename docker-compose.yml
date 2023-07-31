@@ -1,0 +1,37 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: general-api-api
+    ports:
+      - '5002:5002'
+    volumes:
+      - ./api:/app
+    command: yarn run dev
+    depends_on:
+      - database
+    networks:
+      - stack
+
+  database:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - ./data:/var/lib/mysql
+    container_name: general-api-database
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - 3306:3306
+    networks:
+      - stack
+
+networks:
+  stack:
+    driver: bridge
